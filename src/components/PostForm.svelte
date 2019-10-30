@@ -2,10 +2,13 @@
   import { createEventDispatcher } from "svelte";
   const dispatch = createEventDispatcher();
 
+  //import variables
+  export let editingPost;
+
   const apiBaseUrl = "https://jsonplaceholder.typicode.com/posts";
-  $: title = "";
-  $: body = "";
-  $: loading = false;
+  $: title = editingPost.title;
+  $: body = editingPost.body;
+  let loading = false;
 
   const onSubmit = async event => {
     event.preventDefault();
@@ -20,8 +23,18 @@
       body
     };
 
-    const res = await fetch(`${apiBaseUrl}`, {
-      method: "POST",
+    let method, url;
+
+    if (editingPost.id) {
+      url = `${apiBaseUrl}/${editingPost.id}`;
+      method = "PUT";
+    } else {
+      url = `${apiBaseUrl}`;
+      method = "POST";
+    }
+
+    const res = await fetch(url, {
+      method: method,
       body: JSON.stringify(newPost),
       headers: {
         "Content-type": "application/json; charset=UTF-8"
@@ -34,8 +47,8 @@
 
     if (res.ok) {
       console.log("Post Created 👍🏿");
-      title = "";
-      body = "";
+      editingPost.title = "";
+      editingPost.body = "";
     }
     loading = false;
   };
@@ -45,7 +58,6 @@
   form {
     margin: 50px;
   }
-
   .progress {
     margin: 50px auto;
   }
@@ -55,13 +67,15 @@
   <form on:submit={onSubmit}>
     <div class="input-field">
       <label for="title">Title</label>
-      <input type="text" bind:value={title} />
+      <input type="text" bind:value={editingPost.title} />
     </div>
     <div class="input-field">
       <label for="body">Body</label>
-      <textarea bind:value={body} class="materialize-textarea" />
+      <textarea bind:value={editingPost.body} class="materialize-textarea" />
     </div>
-    <button type="submit" class="waves-effect waves-light btn">Add</button>
+    <button type="submit" class="waves-effect waves-light btn">
+      {editingPost.id ? 'Update' : 'Add'}
+    </button>
   </form>
 {:else}
   <div class="progress">
