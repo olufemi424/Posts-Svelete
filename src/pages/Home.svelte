@@ -32,14 +32,14 @@
     editingPost = post;
   };
 
-  // const deletePost = async id => {
-  //   await fetch(`${apiBaseUrl}/${id}`, {
-  //     method: "DELETE"
-  //   });
+  const deletePost = async id => {
+    await fetch(`${apiBaseUrl}/${id}`, {
+      method: "DELETE"
+    });
 
-  //   const newPost = posts.filter(post => post.id !== id);
-  //   posts = newPost;
-  // };
+    const newPost = posts.filter(post => post.id !== id);
+    posts = newPost;
+  };
 
   const reduce = (body, start = 0, end) => {
     if (body) return body.slice(start, end);
